@@ -14,12 +14,26 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry; 
 import com.jme3.scene.shape.Box;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.io.IoBuilder;
 
 public class UserInput extends SimpleApplication {
 
-    private static final Logger logger = LogManager.getLogger(UserInput.class);
+    /**
+     * NOTE:
+     * Esto no funciona. Se coge antes el LogManager de java.util.logging que el indicado en
+     * la propertie a pesar de poner el estático al principio de esta clase.
+     * 
+     * Lo que si he conseguido es redirigir los System.out a log4j2
+     * 
+     */
+    static {
+        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
+    }
+
+    private Logger logger = LogManager.getLogger(UserInput.class);
 
     private final static Trigger TRIGGER_COLOR1 = new KeyTrigger (KeyInput.KEY_SPACE);
     private final static Trigger TRIGGER_COLOR2 = new KeyTrigger (KeyInput.KEY_C);
@@ -30,28 +44,30 @@ public class UserInput extends SimpleApplication {
     private Geometry geom;
     ColorRGBA boxColor = ColorRGBA.Blue;
     String boxColorString;
+    private ActionListener actionListener = new IUActionListener (); 
+    private AnalogListener analogListener = new UIAnalogListener ();
 
-    private ActionListener actionListener = new ActionListener () {
+    private class IUActionListener implements ActionListener {
         @Override
         public void onAction (String name, boolean isPressed, float tpf) {
             if (name.equals(MAPPING_COLOR) && !isPressed) { 
                 boxColor =  (boxColor==ColorRGBA.Blue? ColorRGBA.Red : ColorRGBA.Blue);
                 boxColorString = (boxColor==ColorRGBA.Blue? "Blue" : "Red");
-                logger.info ("You triggered action: " + name + " toggle to " + boxColorString);   
+                logger.debug ("You triggered action: " + name + " to " + boxColorString);   
                 geom.getMaterial().setColor("Color", boxColor);
             } 
         }
-    };
+    }
 
-    private AnalogListener analogListener = new AnalogListener () {
+    private class UIAnalogListener implements AnalogListener {
         @Override
         public void onAnalog (String name, float intensity, float tpf) {
             if(name.equals(MAPPING_ROTATE)) {
-                logger.info ("You triggered analog: " + name + " with intensity: " + intensity);
+                logger.debug ("You triggered analog: " + name + " with intensity: " + intensity);
                 geom.rotate(0,intensity,0);
             }
         }
-    };
+    }
 
     private void initKeys() {
         /** register input mappings to input manager */
@@ -81,14 +97,23 @@ public class UserInput extends SimpleApplication {
     @Override
     /** (optiona) Interact with update loop here */
     public void simpleUpdate(float tpf) {
-        /** unregister one default input mapping, so you can refine Key_C */
-        // inputManager.deleteMapping(INPUT_MAPPING_EXIT);          // Key_ESCAPE 
-        // inputManager.deleteMapping(INPUT_MAPPING_MEMORY);        // Key_M
+        /** unregister one default input mapping, so you can refine Key_C */ 
+        // inputManager.deleteMapping(INPUT_MAPPING_CAMERA_POS);    // Key_C
         /**
+         * NOTE;
          * Se realiza el borrado del mapping en este método, ya que cuando se hace la inicialización
          * de los mappings en el método simpleInitApp todavía no tiene definidos todos los mappings por
-         * defecto, por eso borrarlo da un error de que no se encuentra definido el mapping.
-         */
+         * defecto, por eso da un error de que no se encuentra definido el mapping. 
+         * 
+         * Tiene pinta por el código de InputManager y las estructuras de datos utilizadas que 
+         * la actualización de los mappings de los distintos estados de la aplicacion se 
+         * realizan en threads distintos. Por eso, los mappings INPUT_MAPPING_MEMORY e 
+         * INPUT_MAPPING_CAMERA_POS (ambos se definen en el estado DEBUG de la aplicación) 
+         * solo estan disponibles para poder quitarlos en el metodo simpleUpdate.
+         * 
+         * Hay que seguir profundizando en el aprendizaje del motor para ver como se puede inicializar
+         * todo esto de una forma diferente.
+         */ 
         if (inputManager.hasMapping(INPUT_MAPPING_CAMERA_POS)) {
             inputManager.deleteMapping(INPUT_MAPPING_CAMERA_POS);    // Key_C 
         }
@@ -100,7 +125,14 @@ public class UserInput extends SimpleApplication {
 
     /** Start the jMonkeyEngine application */
     public static void main (String[] args) {
+        System.setOut(IoBuilder
+                        .forLogger(LogManager.getLogger("system.out"))
+                        .setLevel(Level.INFO)
+                        .buildPrintStream()
+        );
+        
         UserInput app = new UserInput();
         app.start();
     }
+
 }
