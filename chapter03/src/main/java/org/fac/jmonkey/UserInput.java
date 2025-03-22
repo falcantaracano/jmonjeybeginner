@@ -18,6 +18,9 @@ import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry; 
 import com.jme3.scene.shape.Box;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,9 +41,11 @@ public class UserInput extends SimpleApplication {
     static {
         // must set before the Logger
         // loads logging.properties from the classpath
-        String path = UserInput.class.getClassLoader().getResource("logging.properties").getFile();
-        System.setProperty("java.util.logging.config.file", path);
-        System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
+        try (InputStream is = UserInput.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            java.util.logging.LogManager.getLogManager().readConfiguration(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final Logger logger = LogManager.getLogger(UserInput.class);
@@ -144,9 +149,6 @@ public class UserInput extends SimpleApplication {
 
     /** Start the jMonkeyEngine application */
     public static void main (String[] args) {
-        logger.info ("java.util.logging.config.file: " + System.getProperty("java.util.logging.config.file"));
-        logger.info ("java.util.logging.manager: " + System.getProperty("java.util.logging.manager"));
-        logger.info ("handlers: " + System.getProperty("handlers"));
         System.setOut(IoBuilder
                         .forLogger(LogManager.getLogger("system.out"))
                         .setLevel(Level.INFO)
