@@ -76,8 +76,7 @@ public class UserInput extends SimpleApplication {
         public void onAction (String name, boolean isPressed, float tpf) {
             if (name.equals(MAPPING_COLOR) && !isPressed) { 
                 boxColor =  (boxColor==ColorRGBA.Blue? ColorRGBA.Red : ColorRGBA.Blue);
-                boxColorString = (boxColor==ColorRGBA.Blue? "Blue" : "Red");
-                logger.debug ("You triggered action: " + name + " to " + boxColorString);   
+                logger.info ("You triggered action: " + name + " to " + (boxColor==ColorRGBA.Blue? "Blue" : "Red"));   
                 geom.getMaterial().setColor("Color", boxColor);
             } 
         }
@@ -87,7 +86,7 @@ public class UserInput extends SimpleApplication {
         @Override
         public void onAnalog (String name, float intensity, float tpf) {
             if(name.equals(MAPPING_ROTATE)) {
-                logger.debug ("You triggered analog: " + name + " with intensity: " + intensity);
+                logger.info ("You triggered analog: " + name + " with intensity: " + intensity);
                 geom.rotate(0,intensity,0);
             }
         }
@@ -120,28 +119,7 @@ public class UserInput extends SimpleApplication {
 
     @Override
     /** (optiona) Interact with update loop here */
-    public void simpleUpdate(float tpf) {
-        /** unregister one default input mapping, so you can refine Key_C */ 
-        // inputManager.deleteMapping(INPUT_MAPPING_CAMERA_POS);    // Key_C
-        /**
-         * NOTE;
-         * Se realiza el borrado del mapping en este método, ya que cuando se hace la inicialización
-         * de los mappings en el método simpleInitApp todavía no tiene definidos todos los mappings por
-         * defecto, por eso da un error de que no se encuentra definido el mapping. 
-         * 
-         * Tiene pinta por el código de InputManager y las estructuras de datos utilizadas que 
-         * la actualización de los mappings de los distintos estados de la aplicacion se 
-         * realizan en threads distintos. Por eso, los mappings INPUT_MAPPING_MEMORY e 
-         * INPUT_MAPPING_CAMERA_POS (ambos se definen en el estado DEBUG de la aplicación) 
-         * solo estan disponibles para poder quitarlos en el metodo simpleUpdate.
-         * 
-         * Hay que seguir profundizando en el aprendizaje del motor para ver como se puede inicializar
-         * todo esto de una forma diferente.
-         */ 
-        if (inputManager.hasMapping(INPUT_MAPPING_CAMERA_POS)) {
-            inputManager.deleteMapping(INPUT_MAPPING_CAMERA_POS);    // Key_C 
-        }
-    }
+    public void simpleUpdate(float tpf) {}
 
     @Override
     /** (optional) Advanced renderer/framebuffer modifications */
