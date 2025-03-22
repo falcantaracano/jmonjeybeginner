@@ -1,6 +1,10 @@
 package org.fac.jmonkey;
 
+import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.StatsAppState;
+import com.jme3.app.state.ConstantVerifierState;
+import com.jme3.audio.AudioListenerState;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.Trigger;
@@ -19,21 +23,27 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.io.IoBuilder;
 
+import org.fac.jmonkey.appstate.UIDebugKeysAppState;
+
 public class UserInput extends SimpleApplication {
 
     /**
      * NOTE:
      * Esto no funciona. Se coge antes el LogManager de java.util.logging que el indicado en
-     * la propertie a pesar de poner el estático al principio de esta clase.
+     * la property a pesar de poner el estático al principio de esta clase.
      * 
      * Lo que si he conseguido es redirigir los System.out a log4j2
      * 
      */
     static {
+        // must set before the Logger
+        // loads logging.properties from the classpath
+        String path = UserInput.class.getClassLoader().getResource("logging.properties").getFile();
+        System.setProperty("java.util.logging.config.file", path);
         System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
     }
 
-    private Logger logger = LogManager.getLogger(UserInput.class);
+    private static final Logger logger = LogManager.getLogger(UserInput.class);
 
     private final static Trigger TRIGGER_COLOR1 = new KeyTrigger (KeyInput.KEY_SPACE);
     private final static Trigger TRIGGER_COLOR2 = new KeyTrigger (KeyInput.KEY_C);
@@ -46,6 +56,15 @@ public class UserInput extends SimpleApplication {
     String boxColorString;
     private ActionListener actionListener = new IUActionListener (); 
     private AnalogListener analogListener = new UIAnalogListener ();
+
+    public UserInput () {
+        super (new StatsAppState(), 
+               new FlyCamAppState(), 
+               new AudioListenerState(), 
+               new UIDebugKeysAppState(),
+               new ConstantVerifierState()
+        );
+    }
 
     private class IUActionListener implements ActionListener {
         @Override
@@ -125,6 +144,9 @@ public class UserInput extends SimpleApplication {
 
     /** Start the jMonkeyEngine application */
     public static void main (String[] args) {
+        logger.info ("java.util.logging.config.file: " + System.getProperty("java.util.logging.config.file"));
+        logger.info ("java.util.logging.manager: " + System.getProperty("java.util.logging.manager"));
+        logger.info ("handlers: " + System.getProperty("handlers"));
         System.setOut(IoBuilder
                         .forLogger(LogManager.getLogger("system.out"))
                         .setLevel(Level.INFO)
