@@ -1,11 +1,9 @@
 package org.fac.jmonkey;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.material.Material; 
-import com.jme3.math.ColorRGBA; 
+
 import com.jme3.renderer.RenderManager; 
-import com.jme3.scene.Geometry; 
-import com.jme3.scene.shape.Box;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +12,9 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.io.IoBuilder;
+import org.fac.jmonkey.appstate.CubeChaser2State;
 
-public class Main extends SimpleApplication {
+public class CubeChaser2 extends SimpleApplication {
 
     static {
         // must set before the Logger
@@ -27,25 +26,15 @@ public class Main extends SimpleApplication {
         }
     }
 
-    private static final Logger logger = LogManager.getLogger(Main.class);
-
-    private Geometry geom;
+    private static final Logger logger = LogManager.getLogger(CubeChaser2.class);
 
     @Override
     /** initialize the scene here */
     public void simpleInitApp () {
         logger.info ("Inicializacion de la escena");
-        // create a cube(blue)-shaped mesh
-        Box b = new Box(1, 1, 1);
-        // create an object from the mesh
-        geom = new Geometry ("Box", b);
-        // create a simple blue material
-        Material mat = new Material (assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Blue);
-        // give the object the blue material
-        geom.setMaterial(mat);
-        // make the object appear in the scene
-        rootNode.attachChild(geom);
+        flyCam.setMoveSpeed(100f);
+        CubeChaser2State state = new CubeChaser2State();
+        stateManager.attach(state);
     }
 
     @Override
@@ -64,7 +53,7 @@ public class Main extends SimpleApplication {
                         .buildPrintStream()
         );
         
-        Main app = new Main();
+        CubeChaser2 app = new CubeChaser2();
         logger.info ("Starting application ...");
         app.start();
     }

@@ -35,7 +35,7 @@ public class TargetPickCenter extends SimpleApplication {
         }
     }
 
-    private static final Logger logger = LogManager.getLogger(UserInput.class);
+    private static final Logger logger = LogManager.getLogger(TargetPickCenter.class);
 
     private final static Trigger TRIGGER_ROTATE = new MouseButtonTrigger(MouseInput.BUTTON_LEFT);
     private final static String MAPPING_ROTATE = "Rotate";

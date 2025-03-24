@@ -26,7 +26,7 @@ public class UIDebugKeysAppState extends AbstractAppState {
         super.initialize(stateManager, app);
         
         this.app = app;
-        this.inputManager = app.getInputManager();
+        this.inputManager = this.app.getInputManager();
         
         if (app.getInputManager() != null) {
             inputManager.addMapping(INPUT_MAPPING_MEMORY, new KeyTrigger(KeyInput.KEY_M));
