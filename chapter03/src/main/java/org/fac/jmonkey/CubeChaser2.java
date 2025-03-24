@@ -39,7 +39,9 @@ public class CubeChaser2 extends SimpleApplication {
 
     @Override
     /** (optiona) Interact with update loop here */
-    public void simpleUpdate(float tpf) {}
+    public void simpleUpdate(float tpf) {
+        logger.debug("Chase counter: " + stateManager.getState(CubeChaser2State.class).getCounter()); 
+    }
 
     @Override
     /** (optional) Advanced renderer/framebuffer modifications */
