@@ -17,14 +17,6 @@ import org.apache.logging.log4j.io.IoBuilder;
 
 public class Main extends SimpleApplication {
 
-    /**
-     * NOTE:
-     * Esto no funciona. Se coge antes el LogManager de java.util.logging que el indicado en
-     * la property a pesar de poner el estático al principio de esta clase.
-     * 
-     * Lo que si he conseguido es redirigir los System.out a log4j2
-     * 
-     */
     static {
         // must set before the Logger
         // loads logging.properties from the classpath
