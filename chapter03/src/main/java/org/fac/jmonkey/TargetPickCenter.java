@@ -42,7 +42,7 @@ public class TargetPickCenter extends SimpleApplication {
     private final static String RED_CUBE = "Red Cube";
     private final static String BLUE_CUBE = "Blue Cube";
     private final static String CENTER_MARK = "center mark";
-    private final static float DEGREE = 1.0f; // Rotate 1 degrre when mouse button lesft is pressed
+    private final static float RADIONS_TO_ROTATE = FastMath.DEG_TO_RAD*1.0f; // Rotate 1 degrre when mouse button lesft is pressed
 
     private static Box mesh = new Box (1,1,1);
     private AnalogListener analogListener = new TPCAnalogListener ();
@@ -115,10 +115,10 @@ public class TargetPickCenter extends SimpleApplication {
                     Geometry target = results.getClosestCollision().getGeometry();
                     if (RED_CUBE.equals(target.getName())) {
                         // rotate left
-                        target.rotate (0, FastMath.DEG_TO_RAD * DEGREE, 0);
+                        target.rotate (0, RADIONS_TO_ROTATE, 0);
                     } else if (BLUE_CUBE.equals (target.getName())) {
                         // rotate right
-                        target.rotate (0, FastMath.DEG_TO_RAD * (-DEGREE), 0);
+                        target.rotate (0, -RADIONS_TO_ROTATE, 0);
                     }
                 } else 
                     logger.debug ("Selection Nothing");

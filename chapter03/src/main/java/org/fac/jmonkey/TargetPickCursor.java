@@ -42,7 +42,7 @@ public class TargetPickCursor extends SimpleApplication {
     private final static String MAPPING_ROTATE = "Rotate";
     private final static String RED_CUBE = "Red Cube";
     private final static String BLUE_CUBE = "Blue Cube";  
-    private final static float DEGREE = 1.0f; // Rotate 1 degrre when mouse button lesft is pressed
+    private final static float RADIONS_TO_ROTATE = FastMath.DEG_TO_RAD*1.0f; // Rotate 1 degrre when mouse button lesft is pressed
 
     private AnalogListener analogListener = new TPCursorAnalogListener();
 
@@ -114,9 +114,9 @@ public class TargetPickCursor extends SimpleApplication {
                 if (results.size() > 0) {
                     Geometry target = results.getClosestCollision().getGeometry();
                     if (RED_CUBE.equals(target.getName())) {
-                        target.rotate (0, FastMath.DEG_TO_RAD * DEGREE, 0);
+                        target.rotate (0, RADIONS_TO_ROTATE, 0);
                     } else if (BLUE_CUBE.equals(target.getName())) {
-                        target.rotate (0, FastMath.DEG_TO_RAD * (-DEGREE), 0);
+                        target.rotate (0, -RADIONS_TO_ROTATE, 0);
                     }
                 } else {
                     logger.debug ("Selection: Nothing");
