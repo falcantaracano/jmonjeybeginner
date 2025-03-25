@@ -121,7 +121,8 @@
 
     <modules>
         <module>chapter02</module>
-        <module>chapter03</module>		
+        <module>chapter03</module>
+        <module>game02</module>		
 	</modules>
 
     <profiles>
